@@ -4,7 +4,7 @@ export default async function ComplaintDashboard() {
   const [results] = await db.query(`
     SELECT 
       c.subject, c.complaint_text, c.submission_date,
-      s.id_no, s.first_name, s.middle_name, s.last_name, s.department
+      s.id_no, s.first_name, s.last_name, s.department
     FROM complaints c
     LEFT JOIN student_data s ON c.student_id = s.id
     ORDER BY c.submission_date DESC
@@ -33,7 +33,7 @@ export default async function ComplaintDashboard() {
               {complaints.map((c, idx) => (
                 <tr key={idx} className="border hover:bg-gray-100">
                   <td className="p-2 border">{c.id_no}</td>
-                  <td className="p-2 border">{`${c.first_name} ${c.middle_name} ${c.last_name}`}</td>
+                  <td className="p-2 border">{`${c.first_name}  ${c.last_name}`}</td>
                   <td className="p-2 border">{c.department}</td>
                   <td className="p-2 border">{c.subject}</td>
                   <td className="p-2 border">{c.complaint_text}</td>

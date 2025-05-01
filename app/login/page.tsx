@@ -1,6 +1,7 @@
 'use client'; // Enables hooks like useState and useRouter in this file
 
 import { useState, FormEvent } from 'react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect,  } from 'react';
 
@@ -124,6 +125,10 @@ export default function LoginPage() {
           >
             Login
           </button>
+          <Link href="/signup" className="text-green-600 underline">
+  Don’t have an account? Sign up here
+</Link>
+
         </form>
       </div>
     </div>

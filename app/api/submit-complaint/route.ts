@@ -1,30 +1,41 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { PrismaClient } from '@/lib/generated/prisma';
+import { NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth'; // Correct path to your authOptions
+import { db } from '@/lib/db';
 
-const prisma = new PrismaClient();
-
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { id_no, subject, complaint_text } = body;
+    // Get the session from NextAuth.js
+    const session = await getServerSession(authOptions);
 
-    // Validate input
-    if (!id_no || !subject || !complaint_text) {
-      return NextResponse.json({ success: false, error: 'All fields are required.' }, { status: 400 });
+    if (!session) {
+      // If no session exists, return an error
+      return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    // Save to database
-    await prisma.complaint.create({
+    // Extract data from the request body
+    const { id_no, subject, complaint_text } = await req.json();
+
+    // Get the user's department from the session
+    const department = session.user?.department;
+
+    if (!id_no || !subject || !complaint_text || !department) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // Create the complaint in the database
+    const complaint = await db.complaint.create({
       data: {
         id_no,
         subject,
         complaint_text,
+        department,
       },
     });
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json(complaint, { status: 201 });
   } catch (error) {
-    console.error('Error submitting complaint:', error);
-    return NextResponse.json({ success: false, error: 'Server error occurred.' }, { status: 500 });
+    console.error(error);
+    return NextResponse.json({ error: 'Failed to submit complaint' }, { status: 500 });
   }
 }

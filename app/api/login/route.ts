@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     // Role and redirection (for demo, based on hardcoded usernames)
     let redirectPath = '/';
     if (user.username === 'dorm_admin') redirectPath = '/dashboard/dormitory';
-    else if (user.username === 'complain_admin') redirectPath = '/dashboard/complain';
+    else if (user.username === 'admin') redirectPath = '/dashboard/complain';
     else if (user.username === 'academic_admin') redirectPath = '/dashboard/academic';
     else if (user.username === 'super_admin') redirectPath = '/dashboard/all';
     else redirectPath = '/';
