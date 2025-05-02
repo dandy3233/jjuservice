@@ -1,31 +1,43 @@
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth'; // adjust path if needed
-import { db } from '@/lib/db'; // Correct import of db
+// app/api/complaints/route.ts
+import { NextResponse } from 'next/server';
+import { PrismaClient } from '@/lib/generated/prisma';
 
-export async function GET(req: Request) {
+const prisma = new PrismaClient();
+
+export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session) {
-      return new Response(JSON.stringify({ error: 'User not authenticated' }), { status: 401 });
-    }
-
-    const department = session.user?.department;
-
-    if (!department) {
-      return new Response(JSON.stringify({ error: 'Department not found in session' }), { status: 400 });
-    }
-
-    const complaints = await db.complaint.findMany({
-      where: { department },
+    const complaints = await prisma.complaint.findMany({
       orderBy: {
         submission_date: 'desc',
       },
+      include: {
+        user: {
+          select: {
+            first_name: true,
+            last_name: true,
+          },
+        },
+      },
     });
 
-    return new Response(JSON.stringify(complaints), { status: 200 });
+    const formatted = complaints.map(c => ({
+      id_no: c.id_no,
+      department: c.department,
+      subject: c.subject,
+      complaint_text: c.complaint_text,
+      submission_date: c.submission_date,
+      first_name: c.user?.first_name || '',
+      last_name: c.user?.last_name || '',
+    }));
+
+    return NextResponse.json(formatted, { status: 200 });
   } catch (error) {
-    console.error(error);
-    return new Response(JSON.stringify({ error: 'Failed to fetch complaints' }), { status: 500 });
+    console.error('Failed to fetch complaints:', error);
+    return new NextResponse(
+      JSON.stringify({ error: 'Failed to fetch complaints' }),
+      { status: 500 }
+    );
+  } finally {
+    await prisma.$disconnect();
   }
 }

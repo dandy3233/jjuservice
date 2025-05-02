@@ -23,14 +23,14 @@ export default function SignupPage() {
       method: 'POST',
       body: JSON.stringify({
         ...formData,
-        username: formData.first_name, // use first_name as login username
+        username: formData.first_name, // using first_name as username
       }),
       headers: { 'Content-Type': 'application/json' },
     });
 
     if (res.ok) {
       alert('Sign up successful! Redirecting to login...');
-      router.push('/login');
+      router.push('/ ');
     } else {
       const data = await res.json();
       alert(data.error || 'Something went wrong');
@@ -38,19 +38,77 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-green-50 flex items-center justify-center p-6">
-      <form onSubmit={handleSubmit} className="bg-white p-8 rounded-lg shadow-md w-full max-w-md space-y-4">
-        <h1 className="text-2xl font-bold text-center text-green-700">Student Sign Up</h1>
+    <div className="relative min-h-screen flex items-center justify-center bg-green-50 overflow-hidden">
+      {/* Optional: Background Image with Overlay */}
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{
+          backgroundImage: `url('/images/bg1.jpg')`,
+          opacity: 0.5,
+        }}
+      >
+        <div className="absolute inset-0 bg-black/30"></div>
+      </div>
 
-        <input name="first_name" onChange={handleChange} placeholder="First Name" className="w-full p-2 border rounded" required />
-        <input name="last_name" onChange={handleChange} placeholder="Last Name" className="w-full p-2 border rounded" required />
-        <input name="id_no" onChange={handleChange} placeholder="ID Number" className="w-full p-2 border rounded" required />
-        <input name="department" onChange={handleChange} placeholder="Department" className="w-full p-2 border rounded" required />
-        <input name="password" onChange={handleChange} placeholder="Password" type="password" className="w-full p-2 border rounded" required />
+      <form
+        onSubmit={handleSubmit}
+        className="relative z-10 w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border-2 border-green-600 backdrop-blur-md space-y-5"
+      >
+        <h1 className="text-3xl font-bold text-center text-green-700 mb-2">Student Sign Up</h1>
+        <p className="text-sm text-gray-600 text-center mb-4">
+          Create an account to submit reports and track progress
+        </p>
 
-        <button type="submit" className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded">
+        <input
+          name="first_name"
+          onChange={handleChange}
+          placeholder="First Name"
+          className="w-full p-3 rounded border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+          required
+        />
+        <input
+          name="last_name"
+          onChange={handleChange}
+          placeholder="Last Name"
+          className="w-full p-3 rounded border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+          required
+        />
+        <input
+          name="id_no"
+          onChange={handleChange}
+          placeholder="ID Number"
+          className="w-full p-3 rounded border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+          required
+        />
+        <input
+          name="department"
+          onChange={handleChange}
+          placeholder="Department"
+          className="w-full p-3 rounded border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+          required
+        />
+        <input
+          name="password"
+          onChange={handleChange}
+          placeholder="Password"
+          type="password"
+          className="w-full p-3 rounded border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+          required
+        />
+
+        <button
+          type="submit"
+          className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded transition duration-300"
+        >
           Sign Up
         </button>
+
+        <p className="text-sm text-center text-gray-600 mt-2">
+          Already have an account?{' '}
+          <a href="/ " className="text-green-700 hover:underline font-medium">
+            Log in
+          </a>
+        </p>
       </form>
     </div>
   );

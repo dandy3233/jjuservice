@@ -1,24 +1,48 @@
-// app/complaints/dashboard.tsx
-import { db } from '@/lib/db';
-import { getSession } from 'next-auth/react';
+'use client';
 
+import { useEffect, useState } from 'react';
 
-interface Complaint {
+type Complaint = {
   id_no: string;
-  first_name: string;
-  last_name: string;
   department: string;
   subject: string;
   complaint_text: string;
   submission_date: string;
-}
+  first_name: string;
+  last_name: string;
+};
 
-export default async function ComplaintDashboard() {
-  // Get the session (logged-in user data)
-  const session = await getSession();
+export default function ComplaintDashboard() {
+  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notLoggedIn, setNotLoggedIn] = useState(false);
 
-  if (!session) {
-    // Redirect to login if user is not authenticated
+  useEffect(() => {
+    async function fetchComplaints() {
+      try {
+        const res = await fetch('/api/complaints');
+        if (res.status === 401) {
+          setNotLoggedIn(true);
+          return;
+        }
+
+        const data = await res.json();
+        setComplaints(data);
+      } catch (err) {
+        console.error('Error fetching complaints:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchComplaints();
+  }, []);
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (notLoggedIn) {
     return (
       <div className="p-6 text-center">
         <h1>You need to be logged in to view this page</h1>
@@ -26,15 +50,10 @@ export default async function ComplaintDashboard() {
     );
   }
 
-  // Fetch complaints from the API for the logged-in user's department
-  const response = await fetch('/api/complaints');
-  const complaints: Complaint[] = await response.json();
-
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
       <div className="max-w-7xl mx-auto bg-white shadow-lg rounded-lg p-6 border border-gray-300">
         <h1 className="text-3xl font-bold text-green-700 text-center mb-4">Complaints Dashboard</h1>
-
         <div className="overflow-x-auto">
           <table className="w-full border-collapse border border-gray-300 text-sm">
             <thead className="bg-green-500 text-white">

@@ -8,7 +8,6 @@ export async function POST(request: Request) {
   try {
     const { username, password } = await request.json();
 
-    // Fetch the user from the database
     const user = await prisma.user.findUnique({
       where: { username },
     });
@@ -20,18 +19,22 @@ export async function POST(request: Request) {
       );
     }
 
-    // Role and redirection (for demo, based on hardcoded usernames)
     let redirectPath = '/';
     if (user.username === 'dorm_admin') redirectPath = '/dashboard/dormitory';
     else if (user.username === 'admin') redirectPath = '/dashboard/complain';
     else if (user.username === 'academic_admin') redirectPath = '/dashboard/academic';
     else if (user.username === 'super_admin') redirectPath = '/dashboard/all';
-    else redirectPath = '/';
- // fallback/student
+    else redirectPath = '/home';
 
-    // Optionally: set a session cookie here if needed
-
-    return NextResponse.json({ success: true, redirectPath });
+    return NextResponse.json({
+      success: true,
+      redirectPath,
+      user: {
+        name: user.username,
+        
+        isAdmin: user.username === 'admin' || user.username === 'super_admin',
+      },
+    });
   } catch (error) {
     console.error('Login failed:', error);
     return NextResponse.json({ success: false, error: 'Server error' }, { status: 500 });

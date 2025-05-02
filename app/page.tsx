@@ -1,12 +1,42 @@
-"use client";
+'use client';
 
+import { useState, useEffect, FormEvent } from 'react';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function HomePage() {
+export default function LoginPage() {
   const [currentBg, setCurrentBg] = useState(0);
-  
-  // Background images array (update paths to match your actual images)
+  const router = useRouter();
+
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (data.success && data.redirectPath) {
+        localStorage.setItem('userInfo', JSON.stringify(data.user));
+        router.push(data.redirectPath);
+      } else {
+        setError(data.error || 'Invalid credentials');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
+      setError('An unexpected error occurred');
+    }
+  };
+
   const backgroundImages = [
     '/images/bg1.jpg',
     '/images/bg2.jpg',
@@ -19,75 +49,74 @@ export default function HomePage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentBg((prev) => (prev + 1) % backgroundImages.length);
-    }, 5000); // Change background every 5 seconds
-
+    }, 5000);
     return () => clearInterval(interval);
   }, [backgroundImages.length]);
 
   return (
-    <div className="relative flex items-center justify-center min-h-screen">
-      {/* Background Images Container */}
-      <div 
-        className="fixed inset-0 -z-10 transition-opacity duration-1000 ease-in-out"
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <div
+        className="absolute inset-0 bg-cover bg-center transition-opacity duration-1000"
         style={{
           backgroundImage: `url(${backgroundImages[currentBg]})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          opacity: 0.7,
+          opacity: 0.6,
+          zIndex: -1,
         }}
       >
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* Main Content */}
-      <div className="w-full max-w-3xl bg-white/90 backdrop-blur-sm shadow-lg rounded-lg p-8 border-2 border-green-500">
-        {/* Logo Section */}
-        <div className="flex justify-center mb-4">
-          <img 
-            src="/images/logo.png"
-            alt="Report System Logo"
-            className="h-40"
-          />
+      <div className="z-10 w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border-2 border-green-600 backdrop-blur-md">
+        <div className="flex justify-center mb-6">
+          <img src="/images/logo.png" alt="Report System Logo" className="h-20 object-contain" />
         </div>
 
-        {/* Title */}
-        <h1 className="text-4xl font-bold text-center text-green-700 mb-6">
-          Report System
-        </h1>
+        <h2 className="text-3xl font-extrabold text-green-700 text-center mb-6">
+          Login to Your Account
+        </h2>
 
-        <p className="text-center text-gray-600 mb-8">
-          Welcome to the Report System. Please choose an action below:
-        </p>
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 border border-red-400 rounded">
+            {error}
+          </div>
+        )}
 
-        {/* Action Buttons */}
-        <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6">
-          <Link
-            href="/login"
-            className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white py-3 px-6 rounded-lg transition duration-300 text-center"
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-gray-700 mb-1" htmlFor="username">Username</label>
+            <input
+              id="username"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              className="w-full p-3 rounded-lg border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700 mb-1" htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full p-3 rounded-lg border-2 border-green-500 focus:outline-none focus:ring-2 focus:ring-green-600"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-lg transition duration-300"
           >
             Login
-          </Link>
+          </button>
+        </form>
 
-          <Link
-            href="/dormitory-report"
-            className="w-full md:w-auto bg-red-500 hover:bg-red-600 text-white py-3 px-6 rounded-lg transition duration-300 text-center"
-          >
-            Block Report
-          </Link>
-
-          <Link
-            href="/academic-report"
-            className="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-lg transition duration-300 text-center"
-          >
-            Academic Reports
-          </Link>
-
-          <Link
-            href="/complain"
-            className="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white py-3 px-6 rounded-lg transition duration-300 text-center"
-          >
-            Complain Reports
-          </Link>
+        <div className="mt-4 text-center text-sm text-gray-600">
+          Don’t have an account?{' '}
+          <Link href="/signup" className="text-green-700 hover:underline">Sign up here</Link>
         </div>
       </div>
     </div>
