@@ -1,6 +1,5 @@
 // app/api/reports/route.ts
 import { NextResponse } from 'next/server';
-// app/api/reports/route.ts
 import { PrismaClient } from '@/lib/generated/prisma'; // ✅ correct custom path
 
 

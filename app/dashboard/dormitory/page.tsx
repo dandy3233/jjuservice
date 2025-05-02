@@ -19,7 +19,11 @@ export default function DormitoryDashboard() {
         setReports(data);
       } catch (error) {
         console.error(error);
-        alert("Error fetching reports: " + error.message);  // Display more specific error
+        if (error instanceof Error) {
+          alert("Error fetching reports: " + error.message);
+        } else {
+          alert("An unknown error occurred.");
+        }
       } finally {
         setLoading(false);
       }
@@ -27,6 +31,7 @@ export default function DormitoryDashboard() {
   
     fetchReports();
   }, []);
+  
   
 
   const handleDelete = (id: number) => {

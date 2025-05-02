@@ -14,15 +14,14 @@ export async function POST(req: NextRequest) {
     }
 
     // Create new dormitory report
-    await prisma.Dormitory.create({
-        data: {
-          block_no,
-          dorm_no,
-          problem_type,
-          problem_description: problem,
-        },
-      });
-      
+    await prisma.dormitory.create({
+      data: {
+        block_no,
+        dorm_no,
+        problem_type,
+        problem_description: problem,
+      },
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
