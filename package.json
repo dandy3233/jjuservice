@@ -3,17 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-  "dev": "next dev --turbopack",
-  "build": "prisma generate && next build",
-  "postinstall": "prisma generate",
-  "start": "next start",
-  "lint": "next lint"
-},
-
+    "dev": "next dev --turbopack",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-solid-svg-icons": "^6.7.2",
     "@fortawesome/react-fontawesome": "^0.2.2",
+    "@neondatabase/serverless": "^1.0.0",
     "@prisma/client": "^6.7.0",
     "bcryptjs": "^3.0.2",
     "lucide-react": "^0.507.0",
