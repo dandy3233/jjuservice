@@ -1,39 +1,33 @@
 'use client';
 
 import { useState, useEffect, FormEvent } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginPage() {
-  const [currentBg, setCurrentBg] = useState(0);
   const router = useRouter();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [currentBg, setCurrentBg] = useState(0); // ✅ fix added
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
 
-    try {
-      const res = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (data.success && data.redirectPath) {
-        localStorage.setItem('userInfo', JSON.stringify(data.user));
-        router.push(data.redirectPath);
-      } else {
-        setError(data.error || 'Invalid credentials');
-      }
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('An unexpected error occurred');
+    if (data.success) {
+      localStorage.setItem('userInfo', JSON.stringify(data.user));
+      router.push(data.redirectPath);
+    } else {
+      setError(data.error);
     }
   };
 

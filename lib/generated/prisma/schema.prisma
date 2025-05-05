@@ -46,6 +46,7 @@ model Complaint {
   complaint_text  String
   submission_date DateTime @default(now())
   department      String
-  userId          Int
-  user            User     @relation(fields: [userId], references: [id])
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
 }
