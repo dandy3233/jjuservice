@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import Link from 'next/link';
 
 export default function ComplaintFormPage() {
   const [idNo, setIdNo] = useState('');
@@ -8,16 +9,18 @@ export default function ComplaintFormPage() {
   const [complaintText, setComplaintText] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setSuccess('');
+    setError('');
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('/api/submit-complaint', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id_no: idNo, subject, complaint_text: complaintText }),
       });
 
@@ -25,59 +28,71 @@ export default function ComplaintFormPage() {
 
       if (data.success) {
         setSuccess('Complaint submitted successfully!');
-        setError('');
         setIdNo('');
         setSubject('');
         setComplaintText('');
+        setTimeout(() => setSuccess(''), 5000);
       } else {
         setError(data.error || 'Error submitting complaint');
-        setSuccess('');
+        setTimeout(() => setError(''), 5000);
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError('An unexpected error occurred.');
-      setSuccess('');
+      setTimeout(() => setError(''), 5000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen p-4">
-      <div className="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 border border-green-500">
-        <h1 className="text-2xl font-semibold text-center text-green-700">Submit Your Complaint</h1>
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 border-2 border-green-500 mt-16">
+        <div className="mb-6 text-center">
+          <Link href="/home" className="text-green-500 text-2xl font-bold hover:text-green-600">
+            &larr; Back to Home
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-800 mt-4">Complaint Form</h1>
+          <p className="text-gray-600 mt-2">Let us know your concerns. Fill out the form below.</p>
+        </div>
 
         {success && (
-          <div className="bg-green-100 text-green-700 p-3 border border-green-500 rounded-md mt-4 text-center">
+          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg text-center">
             {success}
           </div>
         )}
+
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 border border-red-500 rounded-md mt-4 text-center">
-            {error}
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg text-center">
+            ⚠️ {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-          {/* Student ID Input */}
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Student ID */}
           <div>
-            <label className="block text-green-700 font-medium">Student ID Number:</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Student ID Number<span className="text-red-500 ml-1">*</span>
+            </label>
             <input
               type="text"
               value={idNo}
               onChange={(e) => setIdNo(e.target.value)}
               required
-              placeholder="Enter your Student ID"
-              className="w-full px-4 py-2 border border-green-500 rounded focus:ring-2 focus:ring-green-500"
+              placeholder="Example:  R/0000/00"
+              className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
             />
           </div>
 
-          {/* Subject Dropdown */}
+          {/* Subject */}
           <div>
-            <label className="block text-green-700 font-medium">Subject:</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Complaint Subject<span className="text-red-500 ml-1">*</span>
+            </label>
             <select
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-green-500 rounded focus:ring-2 focus:ring-green-500"
+              className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
             >
               <option value="">-- Select Subject --</option>
               <option value="Discipline">Discipline</option>
@@ -87,27 +102,33 @@ export default function ComplaintFormPage() {
               <option value="Cafe">Cafe</option>
               <option value="Police">Police</option>
               <option value="Sport">Sport</option>
+              <option value="Others">Others</option>
             </select>
           </div>
 
-          {/* Complaint Textarea */}
+          {/* Complaint Description */}
           <div>
-            <label className="block text-green-700 font-medium">Your Complaint:</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Complaint Details<span className="text-red-500 ml-1">*</span>
+            </label>
             <textarea
               value={complaintText}
               onChange={(e) => setComplaintText(e.target.value)}
               rows={5}
               required
-              className="w-full px-4 py-2 border border-green-500 rounded focus:ring-2 focus:ring-green-500"
-            ></textarea>
+              placeholder="Describe your complaint in detail..."
+              className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+            />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-lg transition duration-300 border border-green-700"
+            disabled={isSubmitting}
+            className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition ${
+              isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'
+            }`}
           >
-            Submit Complaint
+            {isSubmitting ? 'Submitting...' : 'Submit Complaint'}
           </button>
         </form>
       </div>

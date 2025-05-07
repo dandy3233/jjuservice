@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, FormEvent } from 'react';
+import Link from 'next/link';
 
 export default function AcademicReportPage() {
   const [fullName, setFullName] = useState('');
@@ -9,11 +10,13 @@ export default function AcademicReportPage() {
   const [problem, setProblem] = useState('');
   const [success, setSuccess] = useState('');
   const [errors, setErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSuccess('');
     setErrors([]);
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('/api/submit-academic-report', {
@@ -26,90 +29,119 @@ export default function AcademicReportPage() {
 
       const data = await response.json();
 
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit the report');
+      }
+
       if (data.success) {
         setSuccess('Report submitted successfully!');
         setFullName('');
         setIdNo('');
         setDepartment('');
         setProblem('');
-      } else {
-        setErrors([data.error || 'Failed to submit the report']);
+        setTimeout(() => setSuccess(''), 5000);
       }
-    } catch (error) {
-      console.error(error);
-      setErrors(['An unexpected error occurred.']);
+    } catch (error: any) {
+      setErrors([error.message || 'An unexpected error occurred']);
+      setTimeout(() => setErrors([]), 5000);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="bg-gray-100 flex items-center justify-center min-h-screen">
-      <div className="w-full max-w-lg bg-white shadow-md rounded-lg p-6 border-2 border-green-500">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">Submit Academic Report</h1>
+    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 border-2 border-green-500 mt-16">
+        <div className="mb-6 text-center">
+          <Link href="/home" className="text-green-500 text-2xl font-bold hover:text-green-600">
+            &larr; Back to Home
+          </Link>
+          <h1 className="text-3xl font-bold text-gray-800 mt-4">Academic Issue Report</h1>
+          <p className="text-gray-600 mt-2">Please fill in the details of your academic issue</p>
+        </div>
 
+        {/* Success Message */}
         {success && (
-          <div className="p-3 mb-4 text-white bg-green-500 border border-green-700 rounded-lg text-center">
+          <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
             {success}
           </div>
         )}
-
+        {/* Error Messages */}
         {errors.length > 0 && (
-          <div className="p-3 mb-4 text-white bg-red-500 border border-red-700 rounded-lg">
-            {errors.map((err, idx) => (
-              <p key={idx}>{err}</p>
+          <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+            {errors.map((error, index) => (
+              <p key={index} className="mb-1 last:mb-0">⚠️ {error}</p>
             ))}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block font-semibold">Full Name:</label>
-            <input
-              type="text"
-              name="full_name"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              required
-              className="w-full border-2 border-green-500 rounded-lg p-2 focus:ring focus:ring-green-300 focus:border-green-700"
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">
+                Full Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+                placeholder="e.g. John Doe"
+              />
+            </div>
+
+            <div>
+              <label className="block text-gray-700 font-medium mb-2">
+                Student ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={idNo}
+                onChange={(e) => setIdNo(e.target.value)}
+                required
+                className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+                placeholder="e.g. R/0000/00"
+              />
+            </div>
           </div>
+
           <div>
-            <label className="block font-semibold">ID No:</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Department <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
-              name="id_no"
-              value={idNo}
-              onChange={(e) => setIdNo(e.target.value)}
-              required
-              className="w-full border-2 border-green-500 rounded-lg p-2 focus:ring focus:ring-green-300 focus:border-green-700"
-            />
-          </div>
-          <div>
-            <label className="block font-semibold">Department:</label>
-            <input
-              type="text"
-              name="department"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
               required
-              className="w-full border-2 border-green-500 rounded-lg p-2 focus:ring focus:ring-green-300 focus:border-green-700"
+              className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+              placeholder="e.g. Computer Science"
             />
           </div>
+
           <div>
-            <label className="block font-semibold">Problem Description:</label>
+            <label className="block text-gray-700 font-medium mb-2">
+              Issue Description <span className="text-red-500">*</span>
+            </label>
             <textarea
-              name="problem"
               value={problem}
               onChange={(e) => setProblem(e.target.value)}
-              rows={4}
               required
-              className="w-full border-2 border-green-500 rounded-lg p-2 focus:ring focus:ring-green-300 focus:border-green-700"
+              rows={4}
+              className="w-full px-4 py-2 border-2 border-green-200 rounded-lg focus:border-green-500 focus:ring-2 focus:ring-green-200 outline-none transition"
+              placeholder="Describe the issue in detail..."
             />
           </div>
+
           <button
             type="submit"
-            className="w-full bg-green-500 hover:bg-green-600 text-white py-2 rounded-lg transition duration-300"
+            disabled={isSubmitting}
+            className={`w-full py-3 px-6 rounded-lg font-semibold text-white transition ${
+              isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'
+            }`}
           >
-            Submit Report
+            {isSubmitting ? 'Submitting...' : 'Submit Report'}
           </button>
         </form>
       </div>

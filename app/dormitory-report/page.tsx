@@ -68,7 +68,7 @@ export default function DormitoryReportPage() {
       {/* Report Form */}
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg p-6 md:p-8 border-2 border-green-500 mt-16">
         <div className="mb-6 text-center">
-          <Link href="/" className="text-green-500 text-2xl font-bold hover:text-green-600">
+          <Link href="/home" className="text-green-500 text-2xl font-bold hover:text-green-600">
             &larr; Back to Home
           </Link>
           <h1 className="text-3xl font-bold text-gray-800 mt-4">Dormitory Issue Report</h1>
@@ -143,6 +143,7 @@ export default function DormitoryReportPage() {
               <option value="Cylinder and body">Cylinder and Body</option>
               <option value="Mattress(Firash)">Mattress (Firash)</option>
               <option value="Chipwood">Chipwood Furniture</option>
+              <option value="Others">Others</option>
             </select>
           </div>
 

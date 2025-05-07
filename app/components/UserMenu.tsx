@@ -25,14 +25,42 @@ export default function UserMenu() {
 
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem('userInfo');
-    if (stored) {
-      try {
-        setUserInfo(JSON.parse(stored));
-      } catch {
-        localStorage.removeItem('userInfo');
+
+    const loadUserInfo = () => {
+      const stored = localStorage.getItem('userInfo');
+      if (stored) {
+        try {
+          setUserInfo(JSON.parse(stored));
+        } catch {
+          localStorage.removeItem('userInfo');
+          setUserInfo(null);
+        }
+      } else {
+        setUserInfo(null);
       }
-    }
+    };
+
+    // Initial load
+    loadUserInfo();
+
+    // Handle storage changes from other tabs
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === 'userInfo') {
+        loadUserInfo();
+      }
+    };
+
+    // Periodic check in the same tab (optional but helpful)
+    const interval = setInterval(() => {
+      loadUserInfo();
+    }, 5000); // every 5 seconds
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      clearInterval(interval);
+    };
   }, []);
 
   const logoutHandler = () => {
