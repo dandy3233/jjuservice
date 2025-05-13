@@ -36,7 +36,8 @@ export default function LoginPage() {
     if (data.success) {
       localStorage.setItem('userInfo', JSON.stringify(data.user));
       router.push(data.redirectPath);
-    } else {
+    }
+     else {
       setError(data.error || 'Login failed');
     }
   };

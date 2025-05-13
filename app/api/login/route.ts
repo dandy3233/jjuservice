@@ -20,11 +20,15 @@ export async function POST(request: Request) {
     else if (user.username === 'academic_admin') redirectPath = '/dashboard/academic';
     else if (user.username === 'super_admin') redirectPath = '/dashboard/all';
 
+    // ✅ FIXED: full user info
     return NextResponse.json({
       success: true,
       redirectPath,
       user: {
-        name: user.username,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        id_no: user.id_no,
+        department: user.department,
         isAdmin: ['admin', 'super_admin'].includes(user.username),
       },
     });

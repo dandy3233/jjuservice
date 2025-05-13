@@ -19,49 +19,77 @@ export default function ProfilePage() {
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem('userInfo');
+
     if (stored) {
       try {
-        setUser(JSON.parse(stored));
+        const parsed = JSON.parse(stored);
+        setUser(parsed);
       } catch {
         localStorage.removeItem('userInfo');
       }
     } else {
-      setTimeout(() => router.push('/login'), 500); // Delay before redirect
+      setTimeout(() => router.push('/login'), 500);
     }
   }, [router]);
 
-  if (!mounted || !user) return null;
+  if (!mounted) return null;
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        Loading profile...
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-green-50 flex items-center justify-center px-4 py-10">
-      <div className="bg-white overflow-hidden shadow rounded-lg border w-full max-w-3xl">
-        <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">User Profile</h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">This is your profile information.</p>
-        </div>
-        <div className="border-t border-gray-200 px-4 py-5 sm:p-0">
-          <dl className="sm:divide-y sm:divide-gray-200">
-            <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Full Name</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+    <div className="min-h-screen bg-gradient-to-tr from-green-100 to-green-200 flex items-center justify-center px-4 py-10">
+      <div className="bg-white rounded-xl shadow-2xl border border-green-300 w-full max-w-3xl relative">
+        {/* Circular Image */}
+        <img
+          src="/images/logo.png" // <-- Replace with actual image path if needed
+          alt="User"
+          className="absolute top-6 right-6 w-20 h-20 rounded-full border-4 border-white shadow-md object-cover"
+        />
+
+        <div className="px-6 py-8 sm:px-8">
+          <h2 className="text-2xl font-bold text-green-700 mb-2">User Profile</h2>
+          <p className="text-sm text-gray-500 mb-6">Here are your profile details:</p>
+
+          <div className="space-y-6">
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-gray-500 font-medium">Full Name</div>
+              <div className="col-span-2 text-gray-900">
                 {user.first_name} {user.last_name}
-              </dd>
+              </div>
             </div>
-            <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">ID Number</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.id_no}</dd>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-gray-500 font-medium">ID Number</div>
+              <div className="col-span-2 text-gray-900">{user.id_no}</div>
             </div>
-            <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium text-gray-500">Department</dt>
-              <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{user.department}</dd>
+
+            <div className="grid grid-cols-3 gap-4">
+              <div className="text-gray-500 font-medium">Department</div>
+              <div className="col-span-2 text-gray-900">{user.department}</div>
             </div>
+
             {user.isAdmin && (
-              <div className="py-3 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt className="text-sm font-medium text-gray-500">Role</dt>
-                <dd className="mt-1 text-sm text-yellow-700 sm:mt-0 sm:col-span-2">Admin</dd>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-gray-500 font-medium">Role</div>
+                <div className="col-span-2 text-yellow-700 font-semibold">Admin</div>
               </div>
             )}
-          </dl>
+          </div>
+
+          <div className="mt-8 flex justify-end">
+            <button
+              onClick={() => router.push('/home')}
+              className="px-6 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-sm transition duration-300"
+            >
+              ← Go Back
+            </button>
+          </div>
         </div>
       </div>
     </div>
