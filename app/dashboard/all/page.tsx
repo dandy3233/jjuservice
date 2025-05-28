@@ -97,9 +97,10 @@ interface UserInfo {
   };
 
   // Handle sidebar navigation active state
-  const handleNavClick = (href) => {
-    setActiveNav(href);
-  };
+ const handleNavClick = (href: string) => {
+  setActiveNav(href);
+};
+
 
   const [summary, setSummary] = useState({
   totalDormitory: 0,

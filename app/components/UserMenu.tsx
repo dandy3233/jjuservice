@@ -40,19 +40,23 @@ export default function UserMenu() {
       }
     };
 
+    // Initial load
     loadUserInfo();
 
+    // Handle storage changes from other tabs
     const handleStorage = (event: StorageEvent) => {
       if (event.key === 'userInfo') {
         loadUserInfo();
       }
     };
 
+    // Periodic check in the same tab (optional but helpful)
     const interval = setInterval(() => {
       loadUserInfo();
-    }, 5000);
+    }, 5000); // every 5 seconds
 
     window.addEventListener('storage', handleStorage);
+
     return () => {
       window.removeEventListener('storage', handleStorage);
       clearInterval(interval);
@@ -83,33 +87,17 @@ export default function UserMenu() {
 
         {isMenuOpen && (
           <div
-            className="absolute right-0 mt-2 w-64 bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl ring-1 ring-black/10 py-3 z-50 animate-fade-in"
+            className="absolute right-0 mt-2 w-60 bg-white/95 backdrop-blur-lg rounded-xl shadow-lg ring-1 ring-black/5 py-2 z-50"
             onMouseLeave={() => setMenuOpen(false)}
           >
             {userInfo ? (
               <>
-                {/* ✨ Enhanced User Info Block */}
-                <div className="px-4 pb-3 border-b border-gray-100">
-                  <div className="flex items-center space-x-3">
-                    <img
-                      src="https://cdn-icons-png.flaticon.com/512/17003/17003310.png"
-                      alt="Admin"
-                      width={40}
-                      height={40}
-                      className="rounded-full border shadow"
-                    />
-                    <div>
-                      <p className="text-gray-800 text-base font-semibold tracking-wide">
-                        {userInfo.name}
-                      </p>
-                      <p className="text-green-700 text-sm opacity-85">
-                        {userInfo.isAdmin ? 'Administrator' : 'User'}
-                      </p>
-                    </div>
-                  </div>
+                <div className="px-4 py-2 border-b border-gray-100">
+                  <p className="text-sm font-medium text-gray-700">{userInfo.name}</p>
+                  {userInfo.isAdmin && (
+                    <p className="text-xs text-yellow-600">Admin</p>
+                  )}
                 </div>
-
-                {/* Links */}
                 <div className="p-2 space-y-1">
                   <Link
                     href="/profile"
@@ -119,8 +107,6 @@ export default function UserMenu() {
                     Profile
                   </Link>
                 </div>
-
-                {/* Logout */}
                 <div className="p-2 pt-1 border-t border-gray-100">
                   <button
                     onClick={logoutHandler}
