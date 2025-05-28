@@ -154,7 +154,7 @@ useEffect(() => {
       const data = await res.json();
 
       const labels = Object.keys(data);
-      const values = Object.values(data);
+      const values = Object.values(data) as number[]; // <-- cast here
 
       setComplaintChartData({
         labels,
@@ -175,6 +175,7 @@ useEffect(() => {
 
   fetchComplaintChartData();
 }, []);
+
 
 // const logoutHandler = () => {
 //     localStorage.removeItem('userInfo');
