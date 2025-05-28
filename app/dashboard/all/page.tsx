@@ -10,6 +10,8 @@ import {
   faSignOutAlt,
 } from '@fortawesome/free-solid-svg-icons';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+import type { ChartData } from 'chart.js';
+
 import { useRouter } from 'next/navigation';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // ← Add this
 // import Link from 'next/link';
