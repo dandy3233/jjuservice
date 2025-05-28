@@ -87,7 +87,11 @@ interface UserInfo {
       y: {
         beginAtZero: true,
         grid: { color: '#f3f4f6' },
-        ticks: { color: '#6b7280', callback: (value) => `${value}%` },
+        ticks: {
+  color: '#6b7280',
+  callback: (value: number) => `${value}%`,
+},
+
       },
     },
   };
