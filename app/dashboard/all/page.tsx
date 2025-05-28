@@ -32,6 +32,8 @@ export default function UniversityDashboardPage() {
   const [mounted, setMounted] = useState(false);
   // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     // const [mounted, setMounted] = useState(false);
+    // const [complaintChartData, setComplaintChartData] = useState(null);
+
 
 
 interface UserInfo {
@@ -140,7 +142,8 @@ useEffect(() => {
 }, []);
 
 
-const [complaintChartData, setComplaintChartData] = useState(null);
+const [complaintChartData, setComplaintChartData] = useState<ChartData<'bar'> | undefined>(undefined);
+
 
 useEffect(() => {
   async function fetchComplaintChartData() {
