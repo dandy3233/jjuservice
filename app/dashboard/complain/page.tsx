@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -22,6 +23,7 @@ export default function ComplaintDashboard() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const reportRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchComplaints() {
@@ -123,6 +125,26 @@ export default function ComplaintDashboard() {
             className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
           >
             Download PDF
+          </button>
+        </div>
+
+        {/* Go Back Button */}
+        <div style={{ display: 'flex', justifyContent: 'end', marginTop: '1rem' }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              padding: '0.5rem 1.5rem',
+              backgroundColor: '#059669',
+              color: '#fff',
+              fontWeight: 600,
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'background-color 0.3s',
+            }}
+          >
+            ← Go Back
           </button>
         </div>
 

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
@@ -11,6 +12,7 @@ export default function DormitoryDashboard() {
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
   const reportRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchReports() {
@@ -67,7 +69,26 @@ export default function DormitoryDashboard() {
     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, imgHeight);
     pdf.save('Dormitory_Reports.pdf');
   };
-
+   
+  {/* Go Back Button */}
+        <div style={{ display: 'flex', justifyContent: 'end', marginTop: '1rem' }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              padding: '0.5rem 1.5rem',
+              backgroundColor: '#059669',
+              color: '#fff',
+              fontWeight: 600,
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'background-color 0.3s',
+            }}
+          >
+            ← Go Back
+          </button>
+        </div>
 
   return (
     <div style={pageStyle}>

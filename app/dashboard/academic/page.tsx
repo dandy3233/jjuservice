@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import { useRouter } from 'next/navigation';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
@@ -11,7 +12,9 @@ export default function AcademicReportsDashboard() {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   const reportRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
+  // Fetch reports
   useEffect(() => {
     async function fetchReports() {
       try {
@@ -27,9 +30,11 @@ export default function AcademicReportsDashboard() {
         setLoading(false);
       }
     }
+
     fetchReports();
   }, []);
 
+  // Filter reports by date
   useEffect(() => {
     const from = dateFrom ? new Date(dateFrom) : null;
     const to = dateTo ? new Date(dateTo) : null;
@@ -44,6 +49,7 @@ export default function AcademicReportsDashboard() {
     setFilteredReports(filtered);
   }, [dateFrom, dateTo, reports]);
 
+  // Download PDF from DOM
   const handleDownloadPDF = async () => {
     if (!reportRef.current) return;
 
@@ -87,6 +93,26 @@ export default function AcademicReportsDashboard() {
           </div>
         </div>
 
+        {/* Go Back Button */}
+        <div style={{ display: 'flex', justifyContent: 'end', marginTop: '1rem' }}>
+          <button
+            onClick={() => router.back()}
+            style={{
+              padding: '0.5rem 1.5rem',
+              backgroundColor: '#059669',
+              color: '#fff',
+              fontWeight: 600,
+              borderRadius: '8px',
+              border: 'none',
+              cursor: 'pointer',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+              transition: 'background-color 0.3s',
+            }}
+          >
+            ← Go Back
+          </button>
+        </div>
+
         {/* Report Table */}
         <div ref={reportRef} style={reportBoxStyle}>
           {loading ? (
@@ -124,6 +150,7 @@ export default function AcademicReportsDashboard() {
     </div>
   );
 }
+
 
 const pageStyle: React.CSSProperties = {
   minHeight: '100vh',
