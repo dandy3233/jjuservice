@@ -32,9 +32,11 @@ export default function UniversityDashboardPage() {
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
+  
   // const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     // const [mounted, setMounted] = useState(false);
     // const [complaintChartData, setComplaintChartData] = useState(null);
+    
 
 
 
@@ -42,6 +44,12 @@ interface UserInfo {
   last_name: string;
   first_name: string;
   isAdmin: boolean;
+}
+
+interface Complaint {
+  subject: string;
+  department: string;
+  submission_date: string;
 }
 
 
@@ -130,7 +138,9 @@ useEffect(() => {
   fetchSummary();
 }, []);
 
-const [recentComplaints, setRecentComplaints] = useState([]);
+// const [recentComplaints, setRecentComplaints] = useState([]);
+const [recentComplaints, setRecentComplaints] = useState<Complaint[]>([]);
+
 
 // const [recentComplaints, setRecentComplaints] = useState([]);
 
