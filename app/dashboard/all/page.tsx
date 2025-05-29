@@ -93,7 +93,10 @@ interface UserInfo {
         grid: { color: '#f3f4f6' },
         ticks: {
   color: '#6b7280',
-  callback: (value: number) => `${value}%`,
+  callback: function (this, tickValue: string | number) {
+  return typeof tickValue === 'number' ? `${tickValue}%` : tickValue;
+}
+
 },
 
       },
