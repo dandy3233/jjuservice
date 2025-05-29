@@ -81,27 +81,29 @@ interface UserInfo {
   };
 
   const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { display: false },
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { display: false },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { color: '#6b7280' },
     },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: '#6b7280' } },
-      y: {
-        beginAtZero: true,
-        grid: { color: '#f3f4f6' },
-        ticks: {
-  color: '#6b7280',
-  callback: function (this, tickValue: string | number) {
-  return typeof tickValue === 'number' ? `${tickValue}%` : tickValue;
-}
-
-},
-
+    y: {
+      beginAtZero: true,
+      grid: { color: '#f3f4f6' },
+      ticks: {
+        color: '#6b7280',
+        callback: (tickValue: string | number) =>
+          typeof tickValue === 'number' ? `${tickValue}%` : `${tickValue}`,
       },
     },
-  };
+  },
+};
+
+  
 
   // Handle sidebar navigation active state
  const handleNavClick = (href: string) => {
